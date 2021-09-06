@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="columns is-1">
+                <div class="column is-one-quarter">
+                    <rebrain-menu :chosen='pageName'></rebrain-menu>
+                </div>
+                <div class="column">
+                    <div class="box">
+                        <b-button label="Добавить класс" type="is-primary" @click="newClassFormActive = true" ></b-button>
+                    </div>
+                    <div class="box">
+                        <b-table :data="classes" :loading="isLoading" striped hoverable>
+                            <b-table-column field="id" label="ID" v-slot="props">{{ props.row.id }}</b-table-column>
+                            <b-table-column field="number_letter" label="Название" v-slot="props">{{ props.row.number }}{{ props.row.letter }}</b-table-column>
+                            <b-table-column field="teacher" label="Классный руководитель" v-slot="props">
+                                {{ getClassroomTeacher(props.row.id)?.fio }}
+                            </b-table-column>
+                            <b-table-column label="Операции" v-slot="props">
+                                <b-button label="Выбрать учителя" type="is-primary" @click="showClassroomTeacherForm(props.row.id)"></b-button>
+                                <b-button label="Выбрать учеников" type="is-primary" @click="showStudentsForm(props.row.id)"></b-button>
+                                <b-button label="Удалить" type="is-danger" @click="delete_class(props.row.id)"></b-button>
+                            </b-table-column>
+                        </b-table>
+                    </div>
+                </div>
+            </div>
+            <b-modal
+                v-model="newClassFormActive"
+                has-modal-card
+                trap-focus
+                :destroy-on-hide="false"
+                aria-role="dialog"
+                aria-label="Создание класса"
+                aria-modal>
+                <template #default="props">
+                    <new-class-form @close="props.close" @create-class="create_class($event)"></new-class-form>
+                </template>
+            </b-modal>
+            <b-modal
+                v-model="classroomTeacherFormActive"
+                has-modal-card
+                trap-focus
+                :destroy-on-hide="false"
+                aria-role="dialog"
+                aria-label="Выбор классного руководителя"
+                aria-modal>
+                <template #default="props">
+                    <classroom-teacher-form
+                        :teachers="getFreeTeachers()"
+                        :current-teacher="getClassroomTeacher(currentClassId)"
+                        :class-id="currentClassId"
+                        @close="props.close"
+                        @set-classroom-teacher="setClassroomTeacher($event.teacher_id, $event.class_id)"
+                    ></classroom-teacher-form>
+                </template>
+            </b-modal>
+            <b-modal
+                v-model="studentsFormActive"
+                has-modal-card
+                trap-focus
+                :destroy-on-hide="false"
+                aria-role="dialog"
+                aria-label="Выбор учеников"
+                aria-modal>
+                <template #default="props">
+                    <students-form
+                        :students="getStudents()"
+                        :current-students-ids="getClassStudents(currentClassId)"
+                        :class-id="currentClassId"
+                        @close="props.close"
+                        @set-students="setStudents($event.students, $event.class_id)"
+                    ></students-form>
+                </template>
+            </b-modal>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <!-- Full bundle -->
+    <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+
+    <!-- Individual components -->
+    <script src="https://unpkg.com/buefy/dist/components/table"></script>
+    <script src="https://unpkg.com/buefy/dist/components/input"></script>
+    <script src="https://unpkg.com/buefy/dist/components/button"></script>
+    <script src="https://unpkg.com/buefy/dist/components/menu"></script>
+    <script src="https://unpkg.com/buefy/dist/components/select"></script>
+
+    <script type="module" src="/js/views/classes.js" ></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="columns is-1">
+                <div class="column is-one-quarter">
+                    <rebrain-menu :chosen='pageName'></rebrain-menu>
+                </div>
+                <div class="column">
+                    <div class="box">
+                        <b-button label="Добавить предмет" type="is-primary" @click="newSubjectFormActive = true" ></b-button>
+                    </div>
+                    <div class="box">
+                        <b-table :data="subjects" :loading="isLoading" striped hoverable>
+                            <b-table-column field="id" label="ID" v-slot="props">{{ props.row.id }}</b-table-column>
+                            <b-table-column field="title" label="Название" v-slot="props">{{ props.row.title }}</b-table-column>
+                            <b-table-column label="Операции" v-slot="props">
+                                <b-button label="Удалить" type="is-danger" @click="delete_subject(props.row.id)"></b-button>
+                            </b-table-column>
+                        </b-table>
+                    </div>
+                </div>
+            </div>
+            <b-modal
+                v-model="newSubjectFormActive"
+                has-modal-card
+                trap-focus
+                :destroy-on-hide="false"
+                aria-role="dialog"
+                aria-label="Создание предмета"
+                aria-modal>
+                <template #default="props">
+                    <new-subject-form @close="props.close" @create-subject="create_subject($event)"></new-subject-form>
+                </template>
+            </b-modal>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <!-- Full bundle -->
+    <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+
+    <!-- Individual components -->
+    <script src="https://unpkg.com/buefy/dist/components/table"></script>
+    <script src="https://unpkg.com/buefy/dist/components/input"></script>
+    <script src="https://unpkg.com/buefy/dist/components/button"></script>
+    <script src="https://unpkg.com/buefy/dist/components/menu"></script>
+
+    <script type="module" src="/js/views/subjects.js"></script>
+</body>
+</html>
