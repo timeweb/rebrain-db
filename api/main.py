@@ -37,9 +37,17 @@ class RPC:
         'users',
         'classes',
         'subjects',
-        'lessons',
+        'schedule',
         'classroom_teachers',
         'students_classes',
+    }
+
+    ALLOWED_WEEKDAYS = {
+        'mon',
+        'tue',
+        'wed',
+        'thu',
+        'fri',
     }
 
     def __init__(self):
@@ -50,6 +58,7 @@ class RPC:
             'delete': self.delete,
             'set_classroom_teacher': self.set_classroom_teacher,
             'set_students_classes': self.set_students_classes,
+            'set_lesson': self.set_lesson,
         }
 
     def run(self, rpc):
@@ -151,6 +160,37 @@ class RPC:
         self.db.query(
             f'INSERT INTO `students_classes` (student_id, class_id) VALUES ({students_classes})'
         )
+
+    def set_lesson(self, weekday, num, class_id, subject_id, teacher_id):
+        if weekday not in self.ALLOWED_WEEKDAYS:
+            raise Exception('Unknown weekday')
+        if not isinstance(num, int):
+            raise Exception('Lesson number should be int')
+        if not isinstance(subject_id, int):
+            raise Exception('Subject id should be int')
+        if not isinstance(class_id, int):
+            raise Exception('Class id should be int')
+        if not isinstance(teacher_id, int):
+            raise Exception('Teacher id should be int')
+        self.db = DB(**config.mysql)
+        lesson = self.db.query(
+            'SELECT * FROM `schedule` '
+            'WHERE weekday = %s AND num = %s AND '
+            'class_id = %s',
+            (weekday, num, class_id)
+        )
+        if lesson:
+            self.db.query(
+                'UPDATE `schedule` SET subject_id = %s, teacher_id = %s '
+                'WHERE id = %s',
+                (subject_id, teacher_id, lesson[0]['id'])
+            )
+        else:
+            self.db.query(
+                'INSERT INTO `schedule` (weekday, num, subject_id, class_id, teacher_id) '
+                'VALUES (%s, %s, %s, %s, %s)',
+                (weekday, num, subject_id, class_id, teacher_id)
+            )
 
 
 class API:

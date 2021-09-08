@@ -39,6 +39,9 @@ export default {
     async get_subjects() {
         return this.api_request('get', {table: 'subjects'})
     },
+    async get_lessons() {
+        return this.api_request('get', {table: 'schedule'})
+    },
     async get_users() {
         return this.api_request('get', {table: 'users'})
     },
@@ -61,6 +64,9 @@ export default {
     },
     async set_students_classes(students_ids, class_id) {
         return this.api_request('set_students_classes', {students_ids, class_id})
+    },
+    async set_lesson(weekday, num, class_id, subject_id, teacher_id) {
+        return this.api_request('set_lesson', {weekday, num, class_id, subject_id, teacher_id})
     },
 
     async delete_class(class_id) {

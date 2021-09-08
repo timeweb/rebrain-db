@@ -14,30 +14,18 @@
                     <rebrain-menu :chosen='pageName'></rebrain-menu>
                 </div>
                 <div class="column">
-	                <div class="box">
-                        <b-select placeholder="Класс">
-                            <option v-for="cls in classes" :key="cls.id">{{ cls.number }}{{ cls.letter }}</option>
+                    <div class="box">
+                        <b-select v-model="currentClsId" placeholder="Класс">
+                            <option v-for="cls in classes" :key="cls.id" :value="cls.id">{{ cls.number }}{{ cls.letter }}</option>
                         </b-select>
                     </div>
-                    <div class="box" v-for="title, weekday in weekdays">
-                        <h2 class="subtitle">{{ title }}</h2>
-                        <b-table :data="[0, 1, 2, 3, 4, 5]" striped hoverable>
-                            <b-table-column field="id" label="#" v-slot="props">{{ times[props.row] }}</b-table-column>
-                            <b-table-column field="subject" label="Предмет" v-slot="props">
-                                <b-select placeholder="Предмет">
-                                    <option v-for="subject in subjects" :key="subject.id">{{ subject.title }}</option>
-                                </b-select>
-                            </b-table-column>
-                            <b-table-column field="teacher" label="Учитель" v-slot="props">
-                                <b-select placeholder="Учитель">
-                                    <option v-for="teacher in getTeachers()" :key="teacher.id">{{ teacher.fio }}</option>
-                                </b-select>
-                            </b-table-column>
-                            <b-table-column label="Операции" v-slot="props">
-                                <b-button label="Сохранить" type="is-primary" @click="update_lesson(props.row.id)"></b-button>
-                            </b-table-column>
-                        </b-table>
-                    </div>
+                    <rebrain-schedule
+                        :teachers="getTeachers()"
+                        :subjects="subjects"
+                        :lessons="getLessons(currentClsId)"
+                        :class_id="currentClsId"
+                        @set-lesson="set_lesson($event)"
+                    ></rebrain-schedule>
                 </div>
             </div>
         </div>

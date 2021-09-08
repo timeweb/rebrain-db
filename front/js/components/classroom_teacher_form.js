@@ -3,12 +3,10 @@ export default {
     data: () => ({
         teacher_id: null
     }),
-    created () {
-        if (this.$props.currentTeacher !== null) {
-            this.teacher_id = this.$props.currentTeacher.id
-        }
-    },
     methods: {
+        set_teacher(teacher_id) {
+            this.teacher_id = parseInt(teacher_id)
+        },
         set_classroom_teacher() {
             this.$emit('set-classroom-teacher', {teacher_id: this.teacher_id, class_id: this.classId})
             this.$emit('close')
@@ -25,9 +23,9 @@ export default {
                         @click="$emit('close')"/>
                 </header>
                 <section class="modal-card-body">
-                     <select v-model="teacher_id" class="select" placeholder="Классный руководитель">
+                     <select class="select" placeholder="Классный руководитель" @change="set_teacher($event.target.value)">
                          <option v-if="currentTeacher !== null" :value="currentTeacher.id" :key="currentTeacher.id" selected>{{ currentTeacher.fio }}</option>
-                         <option v-for="teacher in teachers" :value="teacher.id" :key="teacher.id">{{ teacher.fio }}</option>
+                         <option :selected="teacher.id == currentTeacher.id" v-for="teacher in teachers" :value="teacher.id" :key="teacher.id">{{ teacher.fio }}</option>
                      </select>
                 </section>
                 <footer class="modal-card-foot">

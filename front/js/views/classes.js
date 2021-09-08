@@ -79,8 +79,7 @@ new Vue({
         },
         getClassStudents(class_id) {
             const students = this.students_classes.filter(stdcl => stdcl.class_id == class_id)
-                .map(student => student.id)
-            console.log(students)
+                .map(student => student.student_id)
             return students
         },
         async setClassroomTeacher(teacher_id, class_id) {
